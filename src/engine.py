@@ -9,7 +9,7 @@ class Engine(Model, pl.LightningModule):
     def __init__(self):
         super().__init__()
 
-    @classmethod
+    @staticmethod
     def add_model_specific_args(cls, parent_parser):
         parser = ArgumentParser(parents=[parent_parser], add_help=False)
         parser.add_argument()
@@ -24,20 +24,14 @@ class Engine(Model, pl.LightningModule):
     def training_step(self, X):
 
         loss = None
-        tb_log = {}
-        logs = {'loss': loss, 'log': tb_log}
-        return logs
+        self.log(loss, progress_bar=True)
 
     def validation_step(self, X):
 
         loss = None
-        tb_log = {}
-        logs = {'val_loss': loss, 'log': tb_log}
-        return logs
+        self.log(loss, progress_bar=True)
 
     def test_step(self, X):
 
         loss = None
-        tb_log = {}
-        logs = {'test_loss': loss, 'log': tb_log}
-        return logs
+        self.log(loss, progress_bar=True)
