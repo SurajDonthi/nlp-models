@@ -12,8 +12,10 @@ LOSSES = {'bce': F.binary_cross_entropy,
 
 class Engine(Model, pl.LightningModule):
 
-    def __init__(self):
+    def __init__(self, learning_rate=0.0001, *args, **kwargs):
         super().__init__()
+
+        self.save_hyperparameters()
 
     @staticmethod
     def add_model_specific_args(cls, parent_parser):
@@ -22,7 +24,7 @@ class Engine(Model, pl.LightningModule):
         parser.add_argument('-lp', '--log_path', type=str,
                             default='./lightning_logs')
         parser.add_argument('-lr', '--learning_rate',
-                            type=float, default=0.1)
+                            type=float, default=0.0001)
         parser.add_argument('-c', '--criterion', type=str,
                             choices=LOSSES.keys(),
                             default='cross_entropy')

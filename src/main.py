@@ -11,7 +11,9 @@ from .utils import save_args
 
 
 def main():
-    tt_logger = TestTubeLogger(save_dir=args.log_path, name="")
+    tt_logger = TestTubeLogger(save_dir=args.log_path, name="",
+                               description=args.description, debug=False,
+                               create_git_tag=args.git_tag)
 
     log_dir = Path(tt_logger.save_dir) / f"version_{tt_logger.version}"
 
@@ -47,6 +49,8 @@ def main():
 if __name__ == "__main__":
 
     parser = ArgumentParser()
+    parser.add_argument('-gt', '--git_tag', type=bool,
+                        default=False, help='Creates a git tag if true')
     parser = CustomDataLoader.add_argparse_args()
     parser = Engine.add_model_specific_args(parser)
     parser = Trainer.add_argparse_args(parser)
