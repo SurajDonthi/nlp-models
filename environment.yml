@@ -1,0 +1,33 @@
+name: NLP
+channels:
+  - conda-forge
+  - pytorch
+  - stanfordnlp
+  # - huggingface
+  - defaults
+dependencies:
+  - python
+  - pip
+  - cudatoolkit=10.2
+  - pytorch::pytorch
+  # - pytorch::torchvision
+  - pytorch::torchtext
+  - conda-forge::pytorch-lightning
+  - tensorboard
+  - pathlib2
+  - seaborn
+  - numpy
+  - pandas
+  - nltk
+  - spacy
+  - stanfordnlp::stanza
+  - conda-forge::transformers
+  - autopep8
+  - flake8
+  - jupyter
+  - pip:
+      # - pytorch-lightning-bolts
+      - test-tube
+      - rake-nltk
+      - gpustat
+prefix: /home/ubuntu/anaconda3/envs/PytorchEnv
