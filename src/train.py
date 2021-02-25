@@ -6,7 +6,7 @@ from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks.model_checkpoint import ModelCheckpoint
 from pytorch_lightning.loggers.test_tube import TestTubeLogger
 
-from data import ComplaintsLoader
+from data import SentimentLoader
 from pipeline import Pipeline
 from utils import save_args
 
@@ -29,7 +29,7 @@ def main(args):
                                      period=5
                                      )
 
-    data_loader = ComplaintsLoader.from_argparse_args(args)
+    data_loader = SentimentLoader.from_argparse_args(args)
 
     model_pipeline = Pipeline.from_argparse_args(args)
 
@@ -40,7 +40,7 @@ def main(args):
                                          gradient_clip_val=1.0,
                                          #   early_stop_callback=False,
                                          weights_summary='full',
-                                         gpus=1,
+                                         gpus=1
                                          )
 
     trainer.fit(model_pipeline, data_loader)
@@ -50,7 +50,7 @@ def main(args):
 if __name__ == "__main__":
 
     parser = ArgumentParser()
-    parser = ComplaintsLoader.add_argparse_args(parser)
+    parser = SentimentLoader.add_argparse_args(parser)
     parser = Pipeline.add_model_specific_args(parser)
     parser = Trainer.add_argparse_args(parser)
     args = parser.parse_args()

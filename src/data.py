@@ -11,16 +11,15 @@ from transformers import BertTokenizer
 from base import BaseDataModule
 
 
-class Complaints(Dataset):
+class SentimentDataset(Dataset):
 
     def __init__(self, file_path: str,
-                 read_args: dict = dict(usecols=['tweet', 'label']),
-                 max_len=80
+                 read_args: dict = dict(usecols=['review_body', 'sentiment']),
+                 max_len=512, **kwargs
                  ):
         super().__init__()
 
         self.df = pd.read_csv(file_path, **read_args)
-        # self.tweets, self.targets = self.df.tweet, self.df.label
 
         self.max_len = max_len
 
@@ -31,7 +30,6 @@ class Complaints(Dataset):
 
     def __getitem__(self, index):
         text, target = self.df.iloc[index]
-        # self.tweets[index], self.targets[index]
 
         self.encoding = self.tokenizer.encode_plus(
             text,
@@ -51,7 +49,7 @@ class Complaints(Dataset):
         # encoding['token_type_ids'].flatten(), \
 
 
-class ComplaintsLoader(BaseDataModule):
+class SentimentLoader(BaseDataModule):
 
     def __init__(self, data_path: str,
                  train_split_ratio=0.7,
@@ -60,6 +58,7 @@ class ComplaintsLoader(BaseDataModule):
                  test_batchsize: int = 32,
                  num_workers: int = 4,
                  #  tokenizer=None,
+                 read_args: dict = dict(usecols=['review_body', 'sentiment']),
                  ):
 
         super().__init__()
@@ -76,9 +75,10 @@ class ComplaintsLoader(BaseDataModule):
         self.test_batchsize = test_batchsize
         self.val_batchsize = val_batchsize
         self.num_workers = num_workers
+        self._read_args = read_args
 
     def prepare_data(self):
-        self.train = Complaints(self.data_path)
+        self.train = SentimentDataset(self.data_path, self._read_args)
         len_ = len(self.train)
         train_len = int(len_ * self.train_split_ratio)
         val_len = len_ - train_len

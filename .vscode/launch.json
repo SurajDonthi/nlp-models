@@ -15,15 +15,42 @@
         "--data_path",
         "./data/airline_complaints/full_complaints3400.csv",
         "--max_epochs",
-        "1"
-        // "--limit_train_batches",
-        // "0.05",
+        "1",
+        "--limit_train_batches",
+        "0.05"
         // "--train_batchsize",
         // "8",
         // "--val_batchsize",
         // "8",
         // "--test_batchsize",
         // "8"
+      ]
+      // "justMyCode": false
+    },
+    {
+      "name": "Amazon Reviews Sentiment Analysis",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/train.py",
+      "console": "integratedTerminal",
+      "pythonArgs": ["-W", "ignore::UserWarning::0"],
+      "args": [
+        "--data_path",
+        "./data/amazon_outdoors/amazon_reviews_us_Outdoors_v1_00_rebalanced.csv.gz",
+        "--max_epochs",
+        "1",
+        "--limit_train_batches",
+        "0.002",
+        "--limit_val_batches",
+        "0.002",
+        "--limit_test_batches",
+        "0.002",
+        "--train_batchsize",
+        "8",
+        "--val_batchsize",
+        "8",
+        "--test_batchsize",
+        "8"
       ]
       // "justMyCode": false
     }
