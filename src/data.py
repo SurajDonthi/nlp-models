@@ -81,6 +81,7 @@ class SentimentLoader(BaseDataModule):
         len_ = len(self.train)
         train_len = int(len_ * self.train_split_ratio)
         val_len = len_ - train_len
+        print(f'Train length: {train_len}, Val length: {val_len}')
 
         self.train, self.val = random_split(self.train, [train_len, val_len])
 
