@@ -1,14 +1,14 @@
 from pathlib import Path
-# from typing import Dict, Optional, Type
 
 import pandas as pd
 import torch as th
 from torch.utils.data import DataLoader, Dataset, random_split
 from transformers import BertTokenizer
-# from typing_extensions import Literal
 
-# from pathlib2 import Path
 from base import BaseDataModule
+
+# from typing import Dict, Optional, Type
+# from typing_extensions import Literal
 
 
 class SentimentDataset(Dataset):
@@ -52,7 +52,7 @@ class SentimentDataset(Dataset):
 class SentimentLoader(BaseDataModule):
 
     def __init__(self, data_path: str,
-                 train_split_ratio=0.7,
+                 train_split_ratio: int = 0.7,
                  train_batchsize: int = 32,
                  val_batchsize: int = 32,
                  test_batchsize: int = 32,
@@ -67,8 +67,7 @@ class SentimentLoader(BaseDataModule):
 
         if not self.data_path.exists():
             raise Exception(
-                f"Path '{self.data_path.absolute().as_posix()}' \
-                    does not exist!")
+                f"Path '{self.data_path.absolute().as_posix()}' does not exist!")
 
         self.train_split_ratio = train_split_ratio
         self.train_batchsize = train_batchsize
@@ -96,5 +95,4 @@ class SentimentLoader(BaseDataModule):
             return loader
 
     def test_dataloader(self):
-        return DataLoader(self.val, batch_size=self.train_batchsize,
-                          shuffle=True, num_workers=self.num_workers)
+        return self.val_dataloader()
