@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 import torch
 import torch.nn.functional as F
 from pytorch_lightning.metrics.functional.classification import (
-    f1_score, multiclass_auroc, precision, recall)
+    f1_score, multiclass_auroc, precision, precision_recall, recall)
 from pytorch_lightning.utilities import parsing
 from transformers import (AdamW, BertModel, BertTokenizer, DistilBertModel,
                           DistilBertTokenizer, PreTrainedTokenizer,
@@ -44,7 +44,8 @@ class Pipeline(BaseModule):
                  lr: float = 5e-5,
                  criterion: Literal[tuple(LOSSES.keys())] = 'cross_entropy',
                  freeze_bert: bool = False,
-                 optim_args: dict = {'eps': 1e-8},
+                 model_args: dict = dict(dropout=0),
+                 optim_args: dict = dict(eps=1e-8),
                  *args, **kwargs):
         super().__init__()
 
@@ -61,7 +62,7 @@ class Pipeline(BaseModule):
             BERT_BASE[bert_base]['tokenizer']\
             .from_pretrained(self.pretrained_model_name)
 
-        self.classifier = ClassifierModel()
+        self.classifier = ClassifierModel(**model_args)
 
         self.save_hyperparameters()
 
@@ -139,6 +140,7 @@ class Pipeline(BaseModule):
 
         p = precision(out, targets)
         r = recall(out, targets)
+        pr = precision_recall(out, targets)
         f1 = f1_score(preds, targets)
         auroc = multiclass_auroc(out, targets)
 
@@ -146,6 +148,8 @@ class Pipeline(BaseModule):
             'Loss/test_loss': loss,
             'Accuracy/test_acc': acc,
             'Precision': p,
+            'Precision_pr': pr[0],
+            'Recall_pr': pr[1],
             'Recall': r,
             'F1 score': f1,
             'Multiclass AUROC': auroc
