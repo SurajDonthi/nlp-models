@@ -52,7 +52,7 @@ class SentimentDataset(Dataset):
 class SentimentLoader(BaseDataModule):
 
     def __init__(self, data_path: str,
-                 train_split_ratio: int = 0.7,
+                 train_split_ratio: float = 0.7,
                  train_batchsize: int = 32,
                  val_batchsize: int = 32,
                  test_batchsize: int = 32,
