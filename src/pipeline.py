@@ -131,7 +131,7 @@ class Pipeline(BaseModule):
                 'Loss/val_loss': loss,
                 'Accuracy/val_acc': acc
             }
-            self.log_dict(logs, prog_bar=True, on_epoch=True, on_step=True)
+            self.log_dict(logs, prog_bar=True)
 
     def test_step(self, batch, batch_idx):
         *_, targets = batch
