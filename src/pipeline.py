@@ -2,9 +2,8 @@ from argparse import ArgumentParser
 
 import torch
 import torch.nn.functional as F
-# from torch.optim import AdamW
-# from torch import nn
-from pytorch_lightning.utilities import parsing
+from pytorch_lightning.metrics.functional.classification import (
+    f1_score, multiclass_auroc, precision, recall)
 from transformers import (AdamW, BertModel, BertTokenizer, DistilBertModel,
                           DistilBertTokenizer, PreTrainedTokenizer,
                           SqueezeBertModel, SqueezeBertTokenizer,
@@ -13,9 +12,6 @@ from typing_extensions import Literal
 
 from base import BaseModule
 from models import ClassifierModel
-
-# from typing import Optional
-
 
 LOSSES = {'bce': F.binary_cross_entropy,
           'bce_logits': F.binary_cross_entropy_with_logits,
@@ -103,7 +99,7 @@ class Pipeline(BaseModule):
                                     )
         return self.classifier(embeddings)
 
-    def shared_step(self, batch):
+    def shared_step(self, batch, return_preds=False):
         *batch, targets = batch
         out = self(batch)
 
@@ -111,6 +107,8 @@ class Pipeline(BaseModule):
         _, preds = torch.max(out, dim=1)
         acc = (preds == targets).float().mean()
 
+        if return_preds:
+            loss, acc, out, preds
         return loss, acc
 
     def training_step(self, batch, batch_idx):
@@ -135,10 +133,20 @@ class Pipeline(BaseModule):
             self.log_dict(logs, prog_bar=True, on_epoch=True, on_step=True)
 
     def test_step(self, batch, batch_idx):
-        loss, acc = self.shared_step(batch)
+        *_, targets = batch
+        loss, acc, out, preds = self.shared_step(batch, return_preds=True)
+
+        p = precision(out, targets)
+        r = recall(out, targets)
+        f1 = f1_score(preds, targets)
+        auroc = multiclass_auroc(out, targets)
 
         logs = {
             'Loss/test_loss': loss,
-            'Accuracy/test_acc': acc
+            'Accuracy/test_acc': acc,
+            'Precision': p,
+            'Recall': r,
+            'F1 score': f1,
+            'Multiclass AUROC': auroc
         }
-        self.log_dict(logs, prog_bar=True, on_epoch=True, on_step=True)
+        self.log_dict(logs)
