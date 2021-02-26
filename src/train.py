@@ -22,7 +22,7 @@ def main(args):
     checkpoint_dir = log_dir / "checkpoints"
     os.makedirs(checkpoint_dir, exist_ok=True)
     chkpt_callback = ModelCheckpoint(checkpoint_dir,
-                                     monitor='val_loss',
+                                     monitor='Loss/val_loss',
                                      save_last=True,
                                      mode='min',
                                      save_top_k=10,
@@ -40,7 +40,8 @@ def main(args):
                                          gradient_clip_val=1.0,
                                          #   early_stop_callback=False,
                                          weights_summary='full',
-                                         gpus=1
+                                         gpus=1,
+                                         profiler=True
                                          )
 
     trainer.fit(model_pipeline, data_loader)
