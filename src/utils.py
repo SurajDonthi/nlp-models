@@ -1,6 +1,6 @@
 import csv
 from argparse import Namespace
-from pathlib2 import Path
+from pathlib import Path
 
 
 def save_args(args: Namespace, save_dir: Path) -> None:
