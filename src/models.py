@@ -5,7 +5,7 @@ class ClassifierModel(nn.Module):
 
     def __init__(self, embedding_size: int = 768, hidden_size: int = 128,
                  dropout: float = 0.3,
-                 num_classes: int = 2):
+                 num_classes: int = 3):
         """
         [summary]
 
