@@ -109,7 +109,7 @@ class Pipeline(BaseModule):
         acc = (preds == targets).float().mean()
 
         if return_preds:
-            loss, acc, out, preds
+            return loss, acc, out, preds
         return loss, acc
 
     def training_step(self, batch, batch_idx):
