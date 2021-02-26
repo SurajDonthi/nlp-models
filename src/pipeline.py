@@ -4,6 +4,7 @@ import torch
 import torch.nn.functional as F
 from pytorch_lightning.metrics.functional.classification import (
     f1_score, multiclass_auroc, precision, recall)
+from pytorch_lightning.utilities import parsing
 from transformers import (AdamW, BertModel, BertTokenizer, DistilBertModel,
                           DistilBertTokenizer, PreTrainedTokenizer,
                           SqueezeBertModel, SqueezeBertTokenizer,
