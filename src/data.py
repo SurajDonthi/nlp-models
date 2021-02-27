@@ -7,9 +7,6 @@ from transformers import BertTokenizer
 
 from base import BaseDataModule
 
-# from typing import Dict, Optional, Type
-# from typing_extensions import Literal
-
 
 class SentimentDataset(Dataset):
 
@@ -58,7 +55,9 @@ class SentimentLoader(BaseDataModule):
                  test_batchsize: int = 32,
                  num_workers: int = 4,
                  #  tokenizer=None,
-                 read_args: dict = dict(usecols=['review_body', 'sentiment']),
+                 data_args: dict = dict(max_len=512,
+                                        read_args=dict(usecols=['review_body', 'sentiment'])
+                                        ),
                  ):
 
         super().__init__()
@@ -74,10 +73,10 @@ class SentimentLoader(BaseDataModule):
         self.test_batchsize = test_batchsize
         self.val_batchsize = val_batchsize
         self.num_workers = num_workers
-        self._read_args = read_args
+        self._data_args = data_args
 
     def prepare_data(self):
-        self.train = SentimentDataset(self.data_path, self._read_args)
+        self.train = SentimentDataset(self.data_path, **self._data_args)
         len_ = len(self.train)
         train_len = int(len_ * self.train_split_ratio)
         val_len = len_ - train_len

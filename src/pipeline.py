@@ -129,7 +129,8 @@ class Pipeline(BaseModule):
 
             logs = {
                 'Loss/val_loss': loss,
-                'Accuracy/val_acc': acc
+                'Accuracy/val_acc': acc,
+                'learning_rate': self.trainer.lightning_optimizers[0].param_groups[0]['lr']
             }
             self.log_dict(logs, prog_bar=True)
 
