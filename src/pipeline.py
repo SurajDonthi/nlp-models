@@ -6,8 +6,8 @@ from pytorch_lightning.metrics.functional.classification import (
     f1_score, multiclass_auroc, precision, precision_recall, recall)
 from pytorch_lightning.utilities import parsing
 from transformers import (AdamW, BertModel, BertTokenizer, DistilBertModel,
-                          DistilBertTokenizer, PreTrainedTokenizer,
-                          SqueezeBertModel, SqueezeBertTokenizer,
+                          DistilBertTokenizer, SqueezeBertModel,
+                          SqueezeBertTokenizer,
                           get_linear_schedule_with_warmup)
 from typing_extensions import Literal
 
@@ -97,7 +97,6 @@ class Pipeline(BaseModule):
 
         embeddings = self.bert_base(input_ids=input_ids,
                                     attention_mask=attention_mask,
-                                    # token_type_ids=token_type_ids
                                     )
         return self.classifier(embeddings)
 

@@ -8,6 +8,7 @@ from pytorch_lightning.loggers.test_tube import TestTubeLogger
 
 from data import SentimentLoader
 from pipeline import Pipeline
+# from tuner import args
 from utils import save_args
 
 
@@ -50,11 +51,12 @@ def main(args):
 
 if __name__ == "__main__":
 
-    parser = ArgumentParser()
-    parser = SentimentLoader.add_argparse_args(parser)
-    parser = Pipeline.add_argparse_args(parser)
-    parser = Pipeline.add_model_specific_args(parser)
-    parser = Trainer.add_argparse_args(parser)
-    args = parser.parse_args()
+    if 'args' not in locals():
+        parser = ArgumentParser()
+        parser = Pipeline.add_model_specific_args(parser)
+        parser = SentimentLoader.add_argparse_args(parser)
+        parser = Pipeline.add_argparse_args(parser)
+        parser = Trainer.add_argparse_args(parser)
+        args = parser.parse_args()
 
     main(args)

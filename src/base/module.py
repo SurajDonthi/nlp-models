@@ -1,25 +1,15 @@
-
 import inspect
 import json
-from pytorch_lightning.utilities import parsing
 from argparse import ArgumentParser, Namespace
-from typing import Union, List, Tuple, Any
+from typing import Any, List, Tuple, Union
 
 import pytorch_lightning as pl
+from pytorch_lightning.utilities import parsing
 
 
 class BaseModule(pl.LightningModule):
 
     def generalize_args(self, kwargs, retain_args=True):
-        if (kwargs is None):
-            kwargs = {'generator': {}, 'discriminator': {}}
-        # <= --> Check whether subset
-        if not ({'generator', 'discriminator'} <= kwargs.keys()):
-            if retain_args:
-                kwargs = {**kwargs, 'generator': kwargs,
-                          'discriminator': kwargs}
-            else:
-                kwargs = {'generator': kwargs, 'discriminator': kwargs}
         return kwargs
 
     @classmethod
