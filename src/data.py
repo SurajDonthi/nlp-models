@@ -47,7 +47,7 @@ class SentimentDataset(BaseDataset):
                  **kwargs
                  ):
         self.df = pd.read_csv(file_path, **read_args)
-        input, labels = self.df.iloc[0], self.df.iloc[1]
+        input, labels = self.df.iloc[:, 0], self.df.iloc[:, 1]
         super().__init__(input, labels, max_len)
 
     def __len__(self):
