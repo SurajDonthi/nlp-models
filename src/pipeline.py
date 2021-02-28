@@ -69,7 +69,7 @@ class Pipeline(BaseModule):
     def __init__(self,
                  data_path: str,
                  bert_base: str = 'bert',
-                 task: str = 'classification',
+                 task: Literal[tuple(TASKS.keys())] = 'classification',
                  tokenizer: Optional[Union[PreTrainedTokenizer]] = None,
                  train_split_ratio: float = 0.7,
                  train_batchsize: int = 32,
@@ -130,17 +130,17 @@ class Pipeline(BaseModule):
         return parser
 
     def prepare_data(self):
-        self.train = self.Dataset(self.data_path, self.tokenizer, **self._data_args)
-        self.train._tokenizer = self.tokenizer
-        len_ = len(self.train)
+        self.train_data = self.Dataset(self.data_path, **self._data_args)
+        self.train_data._tokenizer = self.tokenizer
+        len_ = len(self.train_data)
         train_len = int(len_ * self.train_split_ratio)
         val_len = len_ - train_len
         print(f'Train length: {train_len}, Val length: {val_len}')
 
-        self.train, self.val = random_split(self.train, [train_len, val_len])
+        self.train_data, self.val = random_split(self.train_data, [train_len, val_len])
 
     def train_dataloader(self):
-        return DataLoader(self.train, batch_size=self.train_batchsize,
+        return DataLoader(self.train_data, batch_size=self.train_batchsize,
                           shuffle=True, num_workers=self.num_workers)
 
     def val_dataloader(self):

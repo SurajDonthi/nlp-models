@@ -30,7 +30,7 @@ def main(args):
                                      period=5
                                      )
 
-    data_loader = SentimentLoader.from_argparse_args(args)
+    # data_loader = SentimentLoader.from_argparse_args(args)
 
     model_pipeline = Pipeline.from_argparse_args(args)
 
@@ -45,7 +45,7 @@ def main(args):
                                          profiler=True
                                          )
 
-    trainer.fit(model_pipeline, data_loader)
+    trainer.fit(model_pipeline)
     trainer.test(model_pipeline)
 
 

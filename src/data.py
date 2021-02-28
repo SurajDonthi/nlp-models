@@ -9,7 +9,7 @@ from base import BaseDataModule
 
 class BaseDataset(Dataset):
 
-    def __init__(self, input, labels=None, filepath=False, max_len=256) -> None:
+    def __init__(self, input, labels=None, max_len=256) -> None:
         super().__init__()
 
         # If filepath is true, then implement a parsing function to get self.input & self.labels
@@ -46,11 +46,9 @@ class SentimentDataset(BaseDataset):
                  read_args: dict = dict(usecols=['review_body', 'sentiment']),
                  **kwargs
                  ):
-        super().__init__()
-
         self.df = pd.read_csv(file_path, **read_args)
-        self.input, self.labels = self.df.iloc[0], self.df.iloc[1]
-        self.max_len = max_len
+        input, labels = self.df.iloc[0], self.df.iloc[1]
+        super().__init__(input, labels, max_len)
 
     def __len__(self):
         return len(self.df)

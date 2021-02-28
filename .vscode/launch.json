@@ -37,6 +37,8 @@
       "args": [
         "--data_path",
         "./data/amazon_outdoors/amazon_reviews_us_Outdoors_v1_00_rebalanced.csv.gz",
+        "--task",
+        "sentiment-analysis",
         "--max_epochs",
         "1",
         "--train_split_ratio",
