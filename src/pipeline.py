@@ -1,18 +1,23 @@
 from argparse import ArgumentParser
+from pathlib import Path
+from typing import Optional, Union
 
 import torch
 import torch.nn.functional as F
 from pytorch_lightning.metrics.functional.classification import (
     f1_score, multiclass_auroc, precision, precision_recall, recall)
 from pytorch_lightning.utilities import parsing
+from torch.utils.data import DataLoader, random_split
 from transformers import (AdamW, BertModel, BertTokenizer, DistilBertModel,
-                          DistilBertTokenizer, SqueezeBertModel,
-                          SqueezeBertTokenizer,
+                          DistilBertTokenizer, PreTrainedTokenizer,
+                          SqueezeBertModel, SqueezeBertTokenizer,
                           get_linear_schedule_with_warmup)
 from typing_extensions import Literal
 
 from base import BaseModule
-from models import ClassifierModel
+from data import SentimentDataset
+from models import (DummyClassifier, SequenceClassifierModel,
+                    TokenClassifierModel)
 
 LOSSES = {'bce': F.binary_cross_entropy,
           'bce_logits': F.binary_cross_entropy_with_logits,
@@ -35,34 +40,80 @@ BERT_BASE = {
                 }
 }
 
+TASKS = {
+    'classification': {
+        'model': SequenceClassifierModel,
+        'dataset': None
+    },
+    'sentiment-analysis': {
+        'model': SequenceClassifierModel,
+        'dataset': SentimentDataset
+    },
+    'ner': {
+        'model': TokenClassifierModel,
+        'dataset': None
+    },
+    'pos-tagging': {
+        'model': TokenClassifierModel,
+        'dataset': None
+    },
+    'semantic-similarity': {
+        'model': DummyClassifier,
+        'dataset': None
+    },
+}
+
 
 class Pipeline(BaseModule):
 
-    def __init__(self, bert_base: str = 'bert',
-                 #  tokenizer: Optional[PreTrainedTokenizer] = None,
-                 #  task: str = 'classification',
+    def __init__(self,
+                 data_path: str,
+                 bert_base: str = 'bert',
+                 task: str = 'classification',
+                 tokenizer: Optional[Union[PreTrainedTokenizer]] = None,
+                 train_split_ratio: float = 0.7,
+                 train_batchsize: int = 32,
+                 val_batchsize: int = 32,
+                 test_batchsize: int = 32,
+                 num_workers: int = 4,
                  lr: float = 5e-5,
                  criterion: Literal[tuple(LOSSES.keys())] = 'cross_entropy',
                  freeze_bert: bool = False,
-                 model_args: dict = dict(dropout=0),
+                 data_args: dict = dict(max_len=512,
+                                        read_args=dict(usecols=['review_body', 'sentiment'])
+                                        ),
+                 model_args: dict = dict(dropout=0.3),
                  optim_args: dict = dict(eps=1e-8),
                  *args, **kwargs):
         super().__init__()
 
+        self.data_path = Path(data_path)
+
+        if not self.data_path.exists():
+            raise Exception(
+                f"Path '{self.data_path.absolute().as_posix()}' does not exist!")
+
+        self.train_split_ratio = train_split_ratio
+        self.train_batchsize = train_batchsize
+        self.test_batchsize = test_batchsize
+        self.val_batchsize = val_batchsize
+        self.num_workers = num_workers
+        self._data_args = data_args
+
         self.criterion = LOSSES[criterion]
+        self.lr = lr
         self.optim_args = optim_args
 
-        self.pretrained_model_name = \
-            BERT_BASE[bert_base]['pretrained_model_name']
-
-        self.bert_base = \
-            BERT_BASE[bert_base]['model']\
-            .from_pretrained(self.pretrained_model_name)
-        self.tokenizer = \
-            BERT_BASE[bert_base]['tokenizer']\
+        self.freeze_bert = freeze_bert
+        bert_args = BERT_BASE[bert_base]
+        self.pretrained_model_name = bert_args['pretrained_model_name']
+        self.bert_base = bert_args['model'].from_pretrained(self.pretrained_model_name)
+        self.tokenizer = bert_args['tokenizer']\
             .from_pretrained(self.pretrained_model_name)
 
-        self.classifier = ClassifierModel(**model_args)
+        task_args = TASKS[task]
+        self.classifier = task_args['model'](**model_args)
+        self.Dataset = task_args['dataset']
 
         self.save_hyperparameters()
 
@@ -77,6 +128,29 @@ class Pipeline(BaseModule):
         parser.add_argument('--debug', required=False, const=False, nargs='?',
                             type=parsing.str_to_bool)
         return parser
+
+    def prepare_data(self):
+        self.train = self.Dataset(self.data_path, self.tokenizer, **self._data_args)
+        self.train._tokenizer = self.tokenizer
+        len_ = len(self.train)
+        train_len = int(len_ * self.train_split_ratio)
+        val_len = len_ - train_len
+        print(f'Train length: {train_len}, Val length: {val_len}')
+
+        self.train, self.val = random_split(self.train, [train_len, val_len])
+
+    def train_dataloader(self):
+        return DataLoader(self.train, batch_size=self.train_batchsize,
+                          shuffle=True, num_workers=self.num_workers)
+
+    def val_dataloader(self):
+        if self.val:
+            loader = DataLoader(self.val, batch_size=self.train_batchsize,
+                                shuffle=True, num_workers=self.num_workers)
+            return loader
+
+    def test_dataloader(self):
+        return self.val_dataloader()
 
     def configure_optimizers(self):
         params = []

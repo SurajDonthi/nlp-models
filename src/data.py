@@ -3,32 +3,26 @@ from pathlib import Path
 import pandas as pd
 import torch as th
 from torch.utils.data import DataLoader, Dataset, random_split
-from transformers import BertTokenizer
 
 from base import BaseDataModule
 
 
-class SentimentDataset(Dataset):
+class BaseDataset(Dataset):
 
-    def __init__(self, file_path: str,
-                 read_args: dict = dict(usecols=['review_body', 'sentiment']),
-                 max_len=512, **kwargs
-                 ):
+    def __init__(self, input, labels=None, filepath=False, max_len=256) -> None:
         super().__init__()
 
-        self.df = pd.read_csv(file_path, **read_args)
-
+        # If filepath is true, then implement a parsing function to get self.input & self.labels
+        self.input, self.labels = input, labels
         self.max_len = max_len
 
-        self.tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
-
-    def __len__(self):
-        return len(self.df)
+        self._tokenizer = None
 
     def __getitem__(self, index):
-        text, target = self.df.iloc[index]
+        text, target = self.input[index], self.labels[index]
 
-        self.encoding = self.tokenizer.encode_plus(
+        # Replace this with a more generic tokenizer/ability to change any tokenization params
+        self.encoding = self._tokenizer.encode_plus(
             text,
             add_special_tokens=True,
             max_length=self.max_len,
@@ -43,7 +37,26 @@ class SentimentDataset(Dataset):
             self.encoding.input_ids.squeeze(), \
             self.encoding.attention_mask.squeeze(), \
             th.tensor(target, dtype=th.long)
-        # encoding['token_type_ids'].flatten(), \
+
+
+class SentimentDataset(BaseDataset):
+
+    def __init__(self, file_path: str,
+                 max_len=512,
+                 read_args: dict = dict(usecols=['review_body', 'sentiment']),
+                 **kwargs
+                 ):
+        super().__init__()
+
+        self.df = pd.read_csv(file_path, **read_args)
+        self.input, self.labels = self.df.iloc[0], self.df.iloc[1]
+        self.max_len = max_len
+
+    def __len__(self):
+        return len(self.df)
+
+    def __getitem__(self, index):
+        return super().__getitem__(index)
 
 
 class SentimentLoader(BaseDataModule):
