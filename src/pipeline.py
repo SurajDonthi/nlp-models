@@ -77,7 +77,7 @@ class Pipeline(BaseModule):
                  test_batchsize: int = 32,
                  num_workers: int = 4,
                  lr: float = 5e-5,
-                 criterion: Literal[tuple(LOSSES.keys())] = 'cross_entropy',
+                 criterion: Literal[tuple(LOSSES.keys())] = 'mse',
                  freeze_bert: bool = False,
                  data_args: dict = dict(max_len=512,
                                         read_args=dict(nrows=3500,
@@ -217,7 +217,7 @@ class Pipeline(BaseModule):
         r = recall(out, targets)
         pr = precision_recall(out, targets)
         f1 = f1_score(preds, targets)
-        auroc = multiclass_auroc(out, targets)
+        # auroc = multiclass_auroc(out, targets)
 
         logs = {
             'Loss/test_loss': loss,
@@ -227,6 +227,6 @@ class Pipeline(BaseModule):
             'Recall_pr': pr[1],
             'Recall': r,
             'F1 score': f1,
-            'Multiclass AUROC': auroc
+            # 'Multiclass AUROC': auroc
         }
         self.log_dict(logs)
