@@ -54,7 +54,7 @@ if __name__ == "__main__":
     if 'args' not in locals():
         parser = ArgumentParser()
         parser = Pipeline.add_model_specific_args(parser)
-        parser = SentimentLoader.add_argparse_args(parser)
+        # parser = SentimentLoader.add_argparse_args(parser)
         parser = Pipeline.add_argparse_args(parser)
         parser = Trainer.add_argparse_args(parser)
         args = parser.parse_args()

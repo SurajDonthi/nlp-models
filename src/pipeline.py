@@ -80,7 +80,8 @@ class Pipeline(BaseModule):
                  criterion: Literal[tuple(LOSSES.keys())] = 'cross_entropy',
                  freeze_bert: bool = False,
                  data_args: dict = dict(max_len=512,
-                                        read_args=dict(usecols=['review_body', 'sentiment'])
+                                        read_args=dict(nrows=3500,
+                                                       usecols=['review_body', 'sentiment'])
                                         ),
                  model_args: dict = dict(dropout=0.3),
                  optim_args: dict = dict(eps=1e-8),

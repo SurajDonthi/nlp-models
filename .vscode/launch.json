@@ -42,19 +42,19 @@
         "--max_epochs",
         "1",
         "--train_split_ratio",
-        "0.99",
-        "--limit_train_batches",
-        "0.001",
-        "--limit_val_batches",
-        "0.002",
-        "--limit_test_batches",
-        "0.002",
+        "0.7",
+        // "--limit_train_batches",
+        // "0.001",
+        // "--limit_val_batches",
+        // "0.002",
+        // "--limit_test_batches",
+        // "0.002",
         "--train_batchsize",
-        "4",
+        "16",
         "--val_batchsize",
-        "4",
+        "16",
         "--test_batchsize",
-        "4"
+        "16"
       ]
       // "justMyCode": false
     }
