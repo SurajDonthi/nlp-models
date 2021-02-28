@@ -77,7 +77,7 @@ class Pipeline(BaseModule):
                  test_batchsize: int = 32,
                  num_workers: int = 4,
                  lr: float = 5e-5,
-                 criterion: Literal[tuple(LOSSES.keys())] = 'mse',
+                 criterion: Literal[tuple(LOSSES.keys())] = 'cross_entropy',
                  freeze_bert: bool = False,
                  data_args: dict = dict(max_len=512,
                                         read_args=dict(nrows=3500,
