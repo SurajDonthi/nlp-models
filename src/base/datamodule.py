@@ -3,6 +3,7 @@ import json
 from argparse import ArgumentParser
 
 import pytorch_lightning as pl
+import torch as th
 from pytorch_lightning.utilities import parsing
 from torch.utils.data import Dataset
 
