@@ -6,6 +6,8 @@ import torch
 import torch.nn.functional as F
 from pytorch_lightning.metrics.functional.classification import (
     f1_score, multiclass_auroc, precision, precision_recall, recall)
+from pytorch_lightning.metrics.functional.confusion_matrix import \
+    confusion_matrix
 from pytorch_lightning.utilities import parsing
 from torch.utils.data import DataLoader, random_split
 from transformers import (AdamW, BertModel, BertTokenizer, DistilBertModel,
@@ -214,19 +216,12 @@ class Pipeline(BaseModule):
         loss, acc, out, preds = self.shared_step(batch, return_preds=True)
 
         p = precision(out, targets)
-        r = recall(out, targets)
-        pr = precision_recall(out, targets)
-        f1 = f1_score(preds, targets)
         # auroc = multiclass_auroc(out, targets)
 
         logs = {
             'Loss/test_loss': loss,
             'Accuracy/test_acc': acc,
             'Precision': p,
-            'Precision_pr': pr[0],
-            'Recall_pr': pr[1],
-            'Recall': r,
-            'F1 score': f1,
             # 'Multiclass AUROC': auroc
         }
         self.log_dict(logs)

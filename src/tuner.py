@@ -3,9 +3,11 @@ from argparse import Namespace
 
 args = Namespace()
 
-args.description = "Training ..."
+args.description = "Training with Amazon outdoors data"
+args.log_path = "./logs"
 args.max_epochs = 20
-args.data_path = "./data/"
+args.data_path = "./data/amazon_outdoors/amazon_reviews_us_Outdoors_v1_00_rebalanced.csv.gz"
+args.train_split_ratio = 0.7
 # args.limit_train_batches = 0.01
 # args.limit_val_batches = 0.01
 # args.limit_test_batches = 0.01

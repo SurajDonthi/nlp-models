@@ -32,6 +32,7 @@ class SequenceClassifierModel(nn.Module):
             # nn.Linear(self.embedding_size, self.hidden_size),
             # nn.ReLU(True),
             nn.Linear(self.embedding_size, self.num_classes),
+            nn.Softmax(dim=-1)
         )
 
     def forward(self, embeddings):

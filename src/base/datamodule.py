@@ -4,6 +4,39 @@ from argparse import ArgumentParser
 
 import pytorch_lightning as pl
 from pytorch_lightning.utilities import parsing
+from torch.utils.data import Dataset
+
+
+class BaseDataset(Dataset):
+
+    def __init__(self, input, labels=None, max_len=256) -> None:
+        super().__init__()
+
+        # If filepath is true, then implement a parsing function to get self.input & self.labels
+        self.input, self.labels = input, labels
+        self.max_len = max_len
+
+        self._tokenizer = None
+
+    def __getitem__(self, index):
+        text, target = self.input[index], self.labels[index]
+
+        # Replace this with a more generic tokenizer/ability to change any tokenization params
+        self.encoding = self._tokenizer.encode_plus(
+            text,
+            add_special_tokens=True,
+            max_length=self.max_len,
+            return_token_type_ids=False,
+            padding='max_length',
+            truncation=True,
+            return_attention_mask=True,
+            return_tensors='pt',
+        )
+
+        return \
+            self.encoding.input_ids.squeeze(), \
+            self.encoding.attention_mask.squeeze(), \
+            th.tensor(target, dtype=th.long)
 
 
 class BaseDataModule(pl.LightningDataModule):
