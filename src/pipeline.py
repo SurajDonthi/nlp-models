@@ -218,13 +218,13 @@ class Pipeline(BaseModule):
         *_, targets = batch
         loss, acc, out, preds = self.shared_step(batch, return_preds=True)
 
-        p = precision(out, targets)
+        # p = precision(out, targets)
         # auroc = multiclass_auroc(out, targets)
 
         logs = {
             'Loss/test_loss': loss,
             'Accuracy/test_acc': acc,
-            'Precision': p,
+            # 'Precision': p,
             # 'Multiclass AUROC': auroc
         }
         self.log_dict(logs)

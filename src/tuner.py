@@ -6,7 +6,7 @@ args = Namespace()
 args.description = "Training with Amazon outdoors data for Sentiment Analysis"
 args.task = "sentiment-analysis"
 args.log_path = "./logs"
-args.max_epochs = 1
+args.max_epochs = 20
 args.data_path = "./data/amazon_outdoors/amazon_reviews_us_Outdoors_v1_00_rebalanced.csv.gz"
 args.data_args = dict(max_len=512,
                       read_args=dict(nrows=7500,
