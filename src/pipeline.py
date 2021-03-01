@@ -166,11 +166,12 @@ class Pipeline(BaseModule):
 
         optim = AdamW(params,
                       lr=self.hparams.lr, **self.optim_args)
-        scheduler = get_linear_schedule_with_warmup(optim,
-                                                    num_warmup_steps=0,  # Default value
-                                                    num_training_steps=self.trainer.max_epochs
-                                                    )
-        return [optim], [scheduler]
+        # scheduler = get_linear_schedule_with_warmup(optim,
+        #                                             num_warmup_steps=0,  # Default value
+        #                                             num_training_steps=self.trainer.max_epochs
+        #                                             )
+        return [optim] \
+            # , [scheduler]
 
     def forward(self, batch):
         input_ids, attention_mask = batch
