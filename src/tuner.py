@@ -21,4 +21,4 @@ args.train_batchsize = 16
 args.val_batchsize = 16
 args.test_batchsize = 16
 args.debug = False
-args.git_tag = False
+args.git_tag = True
