@@ -6,7 +6,6 @@ from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks.model_checkpoint import ModelCheckpoint
 from pytorch_lightning.loggers.test_tube import TestTubeLogger
 
-from data import SentimentLoader
 from pipeline import Pipeline
 from tuner import args
 from utils import save_args
@@ -29,8 +28,6 @@ def main(args):
                                      save_top_k=10,
                                      period=5
                                      )
-
-    # data_loader = SentimentLoader.from_argparse_args(args)
 
     model_pipeline = Pipeline.from_argparse_args(args)
 
