@@ -111,8 +111,11 @@ class Pipeline(BaseModule):
         bert_args = BERT_BASE[bert_base]
         self.pretrained_model_name = bert_args['pretrained_model_name']
         self.bert_base = bert_args['model'].from_pretrained(self.pretrained_model_name)
-        self.tokenizer = bert_args['tokenizer']\
-            .from_pretrained(self.pretrained_model_name)
+        if tokenizer:
+            self.tokenizer = tokenizer
+        else:
+            self.tokenizer = bert_args['tokenizer']\
+                .from_pretrained(self.pretrained_model_name)
 
         task_args = TASKS[task]
         self.classifier = task_args['model'](**model_args)
@@ -140,15 +143,15 @@ class Pipeline(BaseModule):
         val_len = len_ - train_len
         print(f'Train length: {train_len}, Val length: {val_len}')
 
-        self.train_data, self.val = random_split(self.train_data, [train_len, val_len])
+        self.train_data, self.val_data = random_split(self.train_data, [train_len, val_len])
 
     def train_dataloader(self):
         return DataLoader(self.train_data, batch_size=self.train_batchsize,
                           shuffle=True, num_workers=self.num_workers)
 
     def val_dataloader(self):
-        if self.val:
-            loader = DataLoader(self.val, batch_size=self.train_batchsize,
+        if self.val_data:
+            loader = DataLoader(self.val_data, batch_size=self.train_batchsize,
                                 shuffle=True, num_workers=self.num_workers)
             return loader
 
