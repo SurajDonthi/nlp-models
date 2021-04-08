@@ -31,10 +31,12 @@ dependencies:
   - conda-forge::fastapi=0.63.0
   - conda-forge::uvicorn=0.13.4
   - conda-forge::spacy=2.2.4
-  - jupyter=1.0.0
+  - jupyter
   - jedi=0.17.2
   # - traceback2=1.4.0
   - lxml=4.6.3
+  - xlrd=2.0.1
+  - openpyxl=3.0.7
   - pip:
       - benepar==0.2.0
       - sentence-transformers==1.0.3
@@ -45,5 +47,5 @@ dependencies:
       - textblob==0.15.3
       - rake-nltk==1.0.4
       - test-tube
-      - gpustat
+      # - gpustat
       # - windows-curses
