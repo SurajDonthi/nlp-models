@@ -1,4 +1,4 @@
-echo "Cleaning up older environment"
+echo "Cleaning up older environment..."
 conda env remove -n NLPDev
 echo "Creating environment NLPDev..."
 conda env create -f environment.yml
@@ -16,4 +16,5 @@ pip install -e .
 Pop-Location
 # echo "Deleting neuralcoref folder..."
 # rm -r ./neuralcoref
+echo "Removing unused packages..."
 conda clean -ay

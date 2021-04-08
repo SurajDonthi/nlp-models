@@ -16,4 +16,5 @@ pip install -e .
 cd -
 # echo "Deleting neuralcoref folder..."
 # rm -r ./neuralcoref
+echo "Removing unused packages..."
 conda clean -ay
