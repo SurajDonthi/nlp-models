@@ -145,9 +145,10 @@ dmypy.json
 # ML folders
 data/
 datasets/
-models/
 lightning_logs/
 logs/
+.weights/
+.models/
 
 # Data files
 # Tabular & models
